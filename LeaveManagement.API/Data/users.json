@@ -1,0 +1,66 @@
+[
+  {
+    "Id": 1,
+    "Name": "Ganesh",
+    "Email": "manager.elec@siemens-energy.com",
+    "Password": "123",
+    "Role": "Manager",
+    "Department": "Electrification"
+  },
+  {
+    "Id": 2,
+    "Name": "Vijay",
+    "Email": "manager.auto@siemens-energy.com",
+    "Password": "123",
+    "Role": "Manager",
+    "Department": "Automation"
+  },
+  {
+    "Id": 3,
+    "Name": "Phani",
+    "Email": "manager.digi@siemens-energy.com",
+    "Password": "123",
+    "Role": "Manager",
+    "Department": "Digitalisation"
+  },
+  {
+    "Id": 4,
+    "Name": "Adhitya",
+    "Email": "employee@test.com",
+    "Password": "1234",
+    "Role": "Employee",
+    "Department": "Digitalisation"
+  },
+  {
+    "Id": 5,
+    "Name": "Ayman",
+    "Email": "employee1@test.com",
+    "Password": "1234",
+    "Role": "Employee",
+    "Department": "Digitalisation"
+  },
+  {
+    "Id": 6,
+    "Name": "Pavan",
+    "Email": "employee2@test.com",
+    "Password": "1234",
+    "Role": "Employee",
+    "Department": "Digitalisation"
+  },
+  {
+    "Id": 7,
+    "Name": "Hari",
+    "Email": "employee3@test.com",
+    "Password": "1234",
+    "Role": "Employee",
+    "Department": "Digitalisation"
+  },
+  {
+    "Id": 8,
+    "Name": "Abhijith",
+    "Email": "employee4@test.com",
+    "Password": "1234",
+    "Role": "Employee",
+    "Department": "Digitalisation"
+  }
+]

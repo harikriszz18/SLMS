@@ -1,0 +1,26 @@
+[
+  {
+    "Id": 1,
+    "EmployeeId": 5,
+    "LeaveType": "Casual",
+    "StartDate": "2026-09-17",
+    "EndDate": "2026-09-17",
+    "Reason": "Check up",
+    "Status": "Approved",
+    "ManagerComment": null,
+    "EmployeeName": null,
+    "EmployeeEmail": null
+  },
+  {
+    "Id": 2,
+    "EmployeeId": 6,
+    "LeaveType": "Sick",
+    "StartDate": "2026-09-17",
+    "EndDate": "2026-09-17",
+    "Reason": "Fever",
+    "Status": "Approved",
+    "ManagerComment": null,
+    "EmployeeName": null,
+    "EmployeeEmail": null
+  }
+]
