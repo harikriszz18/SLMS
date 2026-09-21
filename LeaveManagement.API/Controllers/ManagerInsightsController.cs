@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Globalization;
+using System.Security.Claims;
 using LeaveManagement.API.Interfaces;
 using LeaveManagement.API.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LeaveManagement.API.Controllers;
 
+[Authorize(Roles = "Manager")]
 [ApiController]
 [Route("api/[controller]")]
 public class ManagerInsightsController : ControllerBase
@@ -17,24 +19,85 @@ public class ManagerInsightsController : ControllerBase
         _repository = repository;
     }
 
-    [Authorize(Roles = "Manager")]
+    [HttpGet("absences")]
+    public async Task<IActionResult> GetAbsences([FromQuery] string? date)
+    {
+        var leaves = await _repository.ReadAsync<Leave>("leaves.json");
+        var users = await _repository.ReadAsync<User>("users.json");
+
+        DateTime targetDate = DateTime.Today;
+        if (!string.IsNullOrWhiteSpace(date))
+        {
+            if (DateTime.TryParse(date, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+            {
+                targetDate = parsed.Date;
+            }
+            else if (DateTime.TryParse(date, out var parsedLocal))
+            {
+                targetDate = parsedLocal.Date;
+            }
+        }
+
+        var absentRecords = leaves
+            .Where(l =>
+            {
+                var status = (l.Status ?? string.Empty).Trim();
+                if (!status.Equals("Approved", StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+
+                if (!DateTime.TryParse(l.StartDate?.ToString(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var sDate) &&
+                    !DateTime.TryParse(l.StartDate?.ToString(), out sDate))
+                {
+                    return false;
+                }
+
+                if (!DateTime.TryParse(l.EndDate?.ToString(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var eDate) &&
+                    !DateTime.TryParse(l.EndDate?.ToString(), out eDate))
+                {
+                    return false;
+                }
+
+                return targetDate >= sDate.Date && targetDate <= eDate.Date;
+            })
+            .Select(l =>
+            {
+                var user = users.FirstOrDefault(u => u.Id == l.EmployeeId);
+                return new
+                {
+                    employeeId = l.EmployeeId,
+                    employeeName = !string.IsNullOrWhiteSpace(l.EmployeeName)
+                        ? l.EmployeeName
+                        : user?.Name ?? $"Employee #{l.EmployeeId}",
+                    department = !string.IsNullOrWhiteSpace(user?.Department)
+                        ? user.Department
+                        : "Operations",
+                    leaveType = l.LeaveType,
+                    startDate = l.StartDate,
+                    endDate = l.EndDate,
+                    status = l.Status
+                };
+            })
+            .ToList();
+
+        return Ok(absentRecords);
+    }
+
     [HttpGet("my-department-stats")]
     public async Task<IActionResult> GetMyDepartmentStats([FromQuery] string? date)
     {
-        // 1. Retrieve the current logged-in manager's email from JWT claims
         var userEmail = User.FindFirst(ClaimTypes.Email)?.Value
                      ?? User.FindFirst("email")?.Value;
 
         var allUsers = await _repository.ReadAsync<User>("users.json");
         var allLeaves = await _repository.ReadAsync<Leave>("leaves.json");
 
-        // Find the current manager record to obtain their assigned department
         var currentManager = allUsers.FirstOrDefault(u =>
             u.Email.Equals(userEmail, StringComparison.OrdinalIgnoreCase) && u.Role == "Manager");
 
         string managerDept = currentManager?.Department?.Trim() ?? "";
 
-        // Fallback check if department field in users.json is blank
         if (string.IsNullOrEmpty(managerDept))
         {
             if (userEmail?.Contains("electri", StringComparison.OrdinalIgnoreCase) == true) managerDept = "Electrification";
@@ -49,7 +112,6 @@ public class ManagerInsightsController : ControllerBase
             targetDate = parsedDate.Date;
         }
 
-        // 2. Filter ONLY employees belonging to THIS manager's department
         var deptEmployees = allUsers
             .Where(u => u.Role == "Employee" &&
                         string.Equals(u.Department?.Trim(), managerDept, StringComparison.OrdinalIgnoreCase))
@@ -57,7 +119,6 @@ public class ManagerInsightsController : ControllerBase
 
         var deptEmployeeIds = deptEmployees.Select(e => e.Id).ToHashSet();
 
-        // 3. Count approved leaves for today within this department
         var onLeaveCount = allLeaves
             .Where(l => l.Status == "Approved" &&
                         deptEmployeeIds.Contains(l.EmployeeId) &&
@@ -80,7 +141,6 @@ public class ManagerInsightsController : ControllerBase
         });
     }
 
-    [Authorize(Roles = "Manager")]
     [HttpGet("roster")]
     public async Task<IActionResult> GetWorkforceRoster([FromQuery] string? date)
     {
@@ -93,7 +153,6 @@ public class ManagerInsightsController : ControllerBase
             targetDate = parsedDate.Date;
         }
 
-        // 1. Map approved leaves covering the target date
         var activeLeavesOnDate = allLeaves
             .Where(l => l.Status == "Approved" &&
                         DateTime.TryParse(l.StartDate, out var s) &&
@@ -101,7 +160,6 @@ public class ManagerInsightsController : ControllerBase
                         targetDate >= s.Date && targetDate <= e.Date)
             .ToDictionary(l => l.EmployeeId, l => l);
 
-        // 2. Select all employees across all departments (excluding managers)
         var employees = allUsers
             .Where(u => u.Role == "Employee")
             .Select(emp =>
@@ -123,7 +181,6 @@ public class ManagerInsightsController : ControllerBase
             })
             .ToList();
 
-        // 3. Group employees by department with present/leave tallies
         var groupedByDepartment = employees
             .GroupBy(e => e.department)
             .Select(g => new

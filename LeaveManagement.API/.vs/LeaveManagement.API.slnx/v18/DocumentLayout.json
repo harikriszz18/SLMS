@@ -3,20 +3,40 @@
   "WorkspaceRootPath": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|c:\\users\\z005880f\\slms\\leavemanagement.api\\controllers\\managerinsightscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|solutionrelative:controllers\\managerinsightscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|c:\\users\\z005880f\\slms\\leavemanagement.api\\controllers\\employeecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|solutionrelative:controllers\\employeecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|c:\\users\\z005880f\\slms\\leavemanagement.api\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|c:\\users\\z005880f\\slms\\leavemanagement.api\\data\\users.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|solutionrelative:data\\users.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|c:\\users\\z005880f\\slms\\leavemanagement.api\\controllers\\managerinsightscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|solutionrelative:controllers\\managerinsightscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|c:\\users\\z005880f\\slms\\leavemanagement.api\\data\\leaves.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|solutionrelative:data\\leaves.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|c:\\users\\z005880f\\slms\\leavemanagement.api\\controllers\\leavecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|solutionrelative:controllers\\leavecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|c:\\users\\z005880f\\slms\\leavemanagement.api\\data\\notifications.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|solutionrelative:data\\notifications.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|c:\\users\\z005880f\\slms\\leavemanagement.api\\controllers\\notificationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|solutionrelative:controllers\\notificationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|c:\\users\\z005880f\\slms\\leavemanagement.api\\services\\leaveservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|solutionrelative:services\\leaveservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|c:\\users\\z005880f\\slms\\leavemanagement.api\\data\\holidays.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{9010FB0A-C5B4-EBFE-C4A2-0D96A3C73251}|LeaveManagement.API.csproj|solutionrelative:data\\holidays.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,47 +46,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 3,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ManagerInsightsController.cs",
-              "DocumentMoniker": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Controllers\\ManagerInsightsController.cs",
-              "RelativeDocumentMoniker": "Controllers\\ManagerInsightsController.cs",
-              "ToolTip": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Controllers\\ManagerInsightsController.cs",
-              "RelativeToolTip": "Controllers\\ManagerInsightsController.cs",
-              "ViewState": "AgIAAHAAAAAAAAAAAAAgwIoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-16T08:11:02.85Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "LeaveController.cs",
-              "DocumentMoniker": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Controllers\\LeaveController.cs",
-              "RelativeDocumentMoniker": "Controllers\\LeaveController.cs",
-              "ToolTip": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Controllers\\LeaveController.cs",
-              "RelativeToolTip": "Controllers\\LeaveController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAOIAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-16T07:56:07.921Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "leaves.json",
-              "DocumentMoniker": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Data\\leaves.json",
-              "RelativeDocumentMoniker": "Data\\leaves.json",
-              "ToolTip": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Data\\leaves.json",
-              "RelativeToolTip": "Data\\leaves.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-09-16T06:50:56.674Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
@@ -78,15 +59,113 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Models\\User.cs",
+              "ToolTip": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Models\\User.cs",
+              "RelativeToolTip": "Models\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T05:23:36.777Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "EmployeeController.cs",
+              "DocumentMoniker": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Controllers\\EmployeeController.cs",
+              "RelativeDocumentMoniker": "Controllers\\EmployeeController.cs",
+              "ToolTip": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Controllers\\EmployeeController.cs",
+              "RelativeToolTip": "Controllers\\EmployeeController.cs",
+              "ViewState": "AgIAAHMAAAAAAAAAAAAQwJAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T04:32:33.184Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "users.json",
               "DocumentMoniker": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Data\\users.json",
               "RelativeDocumentMoniker": "Data\\users.json",
               "ToolTip": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Data\\users.json",
               "RelativeToolTip": "Data\\users.json",
-              "ViewState": "AgIAAB4AAAAAAAAAAAAAAAQAAAAtAAAAAAAAAA==",
+              "ViewState": "AgIAACgAAAAAAAAAAAAAwEgAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2026-09-16T06:50:30.578Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ManagerInsightsController.cs",
+              "DocumentMoniker": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Controllers\\ManagerInsightsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ManagerInsightsController.cs",
+              "ToolTip": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Controllers\\ManagerInsightsController.cs",
+              "RelativeToolTip": "Controllers\\ManagerInsightsController.cs",
+              "ViewState": "AgIAAKkAAAAAAAAAAAAgwNQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-17T06:14:06.874Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "NotificationController.cs",
+              "DocumentMoniker": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Controllers\\NotificationController.cs",
+              "RelativeDocumentMoniker": "Controllers\\NotificationController.cs",
+              "ToolTip": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Controllers\\NotificationController.cs",
+              "RelativeToolTip": "Controllers\\NotificationController.cs",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAgwGoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-17T04:52:34.086Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "LeaveService.cs",
+              "DocumentMoniker": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Services\\LeaveService.cs",
+              "RelativeDocumentMoniker": "Services\\LeaveService.cs",
+              "ToolTip": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Services\\LeaveService.cs",
+              "RelativeToolTip": "Services\\LeaveService.cs",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAgwFkAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-17T04:42:34.209Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "notifications.json",
+              "DocumentMoniker": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Data\\notifications.json",
+              "RelativeDocumentMoniker": "Data\\notifications.json",
+              "ToolTip": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Data\\notifications.json",
+              "RelativeToolTip": "Data\\notifications.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-09-17T03:51:53.502Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "holidays.json",
+              "DocumentMoniker": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Data\\holidays.json",
+              "RelativeDocumentMoniker": "Data\\holidays.json",
+              "ToolTip": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Data\\holidays.json",
+              "RelativeToolTip": "Data\\holidays.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-09-17T03:49:27.902Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "leaves.json",
+              "DocumentMoniker": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Data\\leaves.json",
+              "RelativeDocumentMoniker": "Data\\leaves.json",
+              "ToolTip": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\Data\\leaves.json",
+              "RelativeToolTip": "Data\\leaves.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-09-16T06:50:56.674Z"
             }
           ]
         }

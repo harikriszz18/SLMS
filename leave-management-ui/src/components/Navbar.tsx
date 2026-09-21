@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   AppBar,
   Toolbar,
@@ -18,20 +18,25 @@ import {
   Avatar,
   Tooltip,
   Chip,
+  CircularProgress,
 } from "@mui/material";
 import NotificationsNoneRoundedIcon from "@mui/icons-material/NotificationsNoneRounded";
 import LockResetRoundedIcon from "@mui/icons-material/LockResetRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import PersonOutlineRoundedIcon from "@mui/icons-material/PersonOutlineRounded";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import AddAPhotoRoundedIcon from "@mui/icons-material/AddAPhotoRounded";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/SE White bg.png";
 import { ProfilePasswordDialog } from "./ProfilePasswordDialog";
 import { getNotifications } from "../services/notificationService";
+import { uploadProfilePicture, getProfilePicture, removeProfilePicture } from "../services/employeeService";
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const name = localStorage.getItem("name") || "Team Member";
   const email = localStorage.getItem("email") || "Current User";
@@ -41,6 +46,27 @@ function Navbar() {
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
   const [unreadCount, setUnreadCount] = useState<number>(0);
+  const [profilePicture, setProfilePicture] = useState<string>(
+    localStorage.getItem("profilePicture") || ""
+  );
+  const [isUploading, setIsUploading] = useState(false);
+
+  useEffect(() => {
+    const fetchPhoto = async () => {
+      if (email && email !== "Current User") {
+        try {
+          const res = await getProfilePicture(email);
+          if (res?.profilePicture) {
+            setProfilePicture(res.profilePicture);
+            localStorage.setItem("profilePicture", res.profilePicture);
+          }
+        } catch {
+          // Keep local fallback
+        }
+      }
+    };
+    fetchPhoto();
+  }, [email]);
 
   const fetchUnreadCount = async () => {
     try {
@@ -64,7 +90,64 @@ function Navbar() {
 
   useEffect(() => {
     fetchUnreadCount();
+
+    const handleSync = () => fetchUnreadCount();
+    window.addEventListener("notifications_updated", handleSync);
+    window.addEventListener("storage", handleSync);
+
+    const interval = setInterval(fetchUnreadCount, 6000);
+
+    return () => {
+      window.removeEventListener("notifications_updated", handleSync);
+      window.removeEventListener("storage", handleSync);
+      clearInterval(interval);
+    };
   }, [location.pathname]);
+
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Please select a valid image file (PNG, JPG, JPEG, WEBP).");
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Image size should be less than 2 MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64String = reader.result as string;
+      setIsUploading(true);
+      try {
+        await uploadProfilePicture(email, base64String);
+        setProfilePicture(base64String);
+        localStorage.setItem("profilePicture", base64String);
+      } catch (err: any) {
+        alert(err.response?.data?.message || "Failed to update profile photo.");
+      } finally {
+        setIsUploading(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemovePhoto = async () => {
+    setAnchorEl(null);
+    try {
+      await removeProfilePicture(email);
+      setProfilePicture("");
+      localStorage.removeItem("profilePicture");
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Failed to remove profile picture.");
+    }
+  };
 
   const handleLogout = () => {
     localStorage.clear();
@@ -77,6 +160,14 @@ function Navbar() {
 
   return (
     <>
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handlePhotoSelect}
+        accept="image/png, image/jpeg, image/jpg, image/webp"
+        style={{ display: "none" }}
+      />
+
       <AppBar
         position="static"
         elevation={0}
@@ -156,7 +247,10 @@ function Navbar() {
             {/* Notification Icon */}
             <Tooltip title={unreadCount > 0 ? `${unreadCount} unread notices` : "Notifications"}>
               <IconButton
-                onClick={() => navigate("/notifications")}
+                onClick={() => {
+                  navigate("/notifications");
+                  setUnreadCount(0);
+                }}
                 sx={{
                   width: 48,
                   height: 48,
@@ -196,6 +290,7 @@ function Navbar() {
 
             {/* Profile Avatar */}
             <Avatar
+              src={profilePicture || undefined}
               onClick={(e) => setAnchorEl(e.currentTarget)}
               sx={{
                 width: 48,
@@ -216,10 +311,10 @@ function Navbar() {
                 },
               }}
             >
-              {(name || email).charAt(0).toUpperCase()}
+              {!profilePicture && (name || email).charAt(0).toUpperCase()}
             </Avatar>
 
-            {/* User Dropdown Menu with Name, Email & Role */}
+            {/* User Dropdown Menu */}
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
@@ -268,6 +363,38 @@ function Navbar() {
               </Box>
 
               <Divider sx={{ my: 1 }} />
+
+              {/* Upload Photo Option */}
+              <MenuItem
+                onClick={() => {
+                  setAnchorEl(null);
+                  fileInputRef.current?.click();
+                }}
+                disabled={isUploading}
+                sx={{ borderRadius: "10px", py: 1 }}
+              >
+                {isUploading ? (
+                  <CircularProgress size={18} sx={{ mr: 1.5, color: "#00B5B8" }} />
+                ) : (
+                  <AddAPhotoRoundedIcon sx={{ mr: 1.5, fontSize: 21, color: "#00B5B8" }} />
+                )}
+                <Typography fontSize="13.5px" fontWeight={600} color="#0F173B">
+                  {isUploading ? "Uploading Photo..." : "Upload Profile Photo"}
+                </Typography>
+              </MenuItem>
+
+              {/* Remove Photo Option - visible only when photo exists */}
+              {Boolean(profilePicture) && (
+                <MenuItem
+                  onClick={handleRemovePhoto}
+                  sx={{ borderRadius: "10px", py: 1, color: "#DC2626" }}
+                >
+                  <DeleteOutlineRoundedIcon sx={{ mr: 1.5, fontSize: 21, color: "#DC2626" }} />
+                  <Typography fontSize="13.5px" fontWeight={600} color="#DC2626">
+                    Remove Profile Photo
+                  </Typography>
+                </MenuItem>
+              )}
 
               <MenuItem
                 onClick={() => {

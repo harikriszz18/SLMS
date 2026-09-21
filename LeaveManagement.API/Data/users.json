@@ -5,7 +5,8 @@
     "Email": "manager.elec@siemens-energy.com",
     "Password": "123",
     "Role": "Manager",
-    "Department": "Electrification"
+    "Department": "Electrification",
+    "ProfilePicture": null
   },
   {
     "Id": 2,
@@ -13,7 +14,8 @@
     "Email": "manager.auto@siemens-energy.com",
     "Password": "123",
     "Role": "Manager",
-    "Department": "Automation"
+    "Department": "Automation",
+    "ProfilePicture": null
   },
   {
     "Id": 3,
@@ -21,7 +23,8 @@
     "Email": "manager.digi@siemens-energy.com",
     "Password": "123",
     "Role": "Manager",
-    "Department": "Digitalisation"
+    "Department": "Digitalisation",
+    "ProfilePicture": null
   },
   {
     "Id": 4,
@@ -29,7 +32,8 @@
     "Email": "employee@test.com",
     "Password": "1234",
     "Role": "Employee",
-    "Department": "Digitalisation"
+    "Department": "Digitalisation",
+    "ProfilePicture": null
   },
   {
     "Id": 5,
@@ -37,7 +41,8 @@
     "Email": "employee1@test.com",
     "Password": "1234",
     "Role": "Employee",
-    "Department": "Digitalisation"
+    "Department": "Digitalisation",
+    "ProfilePicture": null
   },
   {
     "Id": 6,
@@ -45,7 +50,8 @@
     "Email": "employee2@test.com",
     "Password": "1234",
     "Role": "Employee",
-    "Department": "Digitalisation"
+    "Department": "Digitalisation",
+    "ProfilePicture": null
   },
   {
     "Id": 7,
@@ -53,7 +59,8 @@
     "Email": "employee3@test.com",
     "Password": "1234",
     "Role": "Employee",
-    "Department": "Digitalisation"
+    "Department": "Digitalisation",
+    "ProfilePicture": null
   },
   {
     "Id": 8,
@@ -61,6 +68,16 @@
     "Email": "employee4@test.com",
     "Password": "1234",
     "Role": "Employee",
-    "Department": "Digitalisation"
+    "Department": "Digitalisation",
+    "ProfilePicture": null
+  },
+  {
+    "Id": 9,
+    "Name": "Manikandan",
+    "Email": "employee5@test.com",
+    "Password": "1234",
+    "Role": "Employee",
+    "Department": "Automation",
+    "ProfilePicture": null
   }
 ]

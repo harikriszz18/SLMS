@@ -26,6 +26,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import EventNoteRoundedIcon from "@mui/icons-material/EventNoteRounded";
 import { getAllLeaves } from "../services/managerService";
+import { getLeaveHistory } from "../services/leaveService";
 
 interface Holiday {
   date: string;
@@ -57,7 +58,7 @@ interface LeaveRecord {
 
 function CalendarPage() {
   const role = localStorage.getItem("role") || "Employee";
-  const userEmail = (localStorage.getItem("email") || "").toLowerCase();
+  const userEmail = (localStorage.getItem("email") || "").trim().toLowerCase();
   const isManager = role === "Manager";
 
   const [currentMonth, setCurrentMonth] = useState(8); // September
@@ -71,7 +72,6 @@ function CalendarPage() {
     leaves: LeaveRecord[];
   } | null>(null);
 
-  // Helper to reliably extract the employee's name across all casing and backend formats
   const getEmployeeDisplayName = (leave?: any): string => {
     if (!leave) return "Team Member";
 
@@ -83,7 +83,13 @@ function CalendarPage() {
       leave.userName ||
       leave.UserName;
 
-    if (name && typeof name === "string" && name.trim() !== "" && !name.startsWith("Employee #") && !name.startsWith("Member #")) {
+    if (
+      name &&
+      typeof name === "string" &&
+      name.trim() !== "" &&
+      !name.startsWith("Employee #") &&
+      !name.startsWith("Member #")
+    ) {
       return name;
     }
 
@@ -130,11 +136,21 @@ function CalendarPage() {
   const loadBackendData = async () => {
     setLoading(true);
     try {
-      const data = await getAllLeaves();
-      setAllDbLeaves(Array.isArray(data) ? data : []);
+      if (isManager) {
+        const data = await getAllLeaves();
+        setAllDbLeaves(Array.isArray(data) ? data : []);
+      } else {
+        const data = await getLeaveHistory();
+        setAllDbLeaves(Array.isArray(data) ? data : []);
+      }
     } catch (error) {
       console.error("Failed to load leaves:", error);
-      setAllDbLeaves([]);
+      try {
+        const fallbackData = await getLeaveHistory();
+        setAllDbLeaves(Array.isArray(fallbackData) ? fallbackData : []);
+      } catch {
+        setAllDbLeaves([]);
+      }
     } finally {
       setLoading(false);
     }
@@ -145,8 +161,11 @@ function CalendarPage() {
       return allDbLeaves;
     }
     return allDbLeaves.filter((l) => {
-      const email = (l.employeeEmail || l.EmployeeEmail || "").toLowerCase();
-      return email === userEmail;
+      const email = (l.employeeEmail || l.EmployeeEmail || "").trim().toLowerCase();
+      if (email && userEmail) {
+        return email === userEmail;
+      }
+      return true;
     });
   }, [allDbLeaves, isManager, userEmail]);
 
@@ -181,17 +200,12 @@ function CalendarPage() {
       const endStr = l.endDate || l.EndDate || "";
       if (!startStr || !endStr) return false;
 
-      const start = new Date(startStr);
-      const end = new Date(endStr);
-      const startMonth = start.getMonth();
-      const endMonth = end.getMonth();
-      const startYr = start.getFullYear();
-      const endYr = end.getFullYear();
+      const s = new Date(startStr.split("T")[0]);
+      const e = new Date(endStr.split("T")[0]);
+      const monthStart = new Date(currentYear, currentMonth, 1);
+      const monthEnd = new Date(currentYear, currentMonth + 1, 0);
 
-      return (
-        (startYr === currentYear && startMonth === currentMonth) ||
-        (endYr === currentYear && endMonth === currentMonth)
-      );
+      return s <= monthEnd && e >= monthStart;
     });
   }, [userScopedLeaves, currentMonth]);
 

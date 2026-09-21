@@ -40,3 +40,34 @@ export const getAbsencesByDate = async (dateStr: string) => {
   );
   return res.data;
 };
+
+export const uploadProfilePicture = async (email: string, profilePicture: string) => {
+  const res = await axios.post(
+    `${API_BASE}/Employee/profile-picture`,
+    { email, profilePicture },
+    {
+      headers: getAuthHeader(),
+    }
+  );
+  return res.data;
+};
+
+export const getProfilePicture = async (email: string) => {
+  const res = await axios.get(
+    `${API_BASE}/Employee/profile-picture?email=${encodeURIComponent(email)}`,
+    {
+      headers: getAuthHeader(),
+    }
+  );
+  return res.data;
+};
+
+export const removeProfilePicture = async (email: string) => {
+  const res = await axios.delete(
+    `${API_BASE}/Employee/profile-picture?email=${encodeURIComponent(email)}`,
+    {
+      headers: getAuthHeader(),
+    }
+  );
+  return res.data;
+};

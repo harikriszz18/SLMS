@@ -8,4 +8,5 @@ public class User
     public string Password { get; set; } = string.Empty;
     public string Role { get; set; } = "Employee";
     public string Department { get; set; } = "Electrification";
+    public string? ProfilePicture { get; set; }
 }

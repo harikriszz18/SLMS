@@ -1,83 +1,126 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   Card,
   CardContent,
   Typography,
   Box,
-  Button,
   IconButton,
   Tooltip,
+  Select,
+  MenuItem,
+  Menu,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import AccessTimeFilledRoundedIcon from "@mui/icons-material/AccessTimeFilledRounded";
-import DoneAllRoundedIcon from "@mui/icons-material/DoneAllRounded";
-import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import NotificationsOffOutlinedIcon from "@mui/icons-material/NotificationsOffOutlined";
-import {
-  getNotifications,
-  markAsRead,
-} from "../services/notificationService";
+import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
+import MoreVertRoundedIcon from "@mui/icons-material/MoreVertRounded";
+import DoneAllRoundedIcon from "@mui/icons-material/DoneAllRounded";
+import DeleteSweepRoundedIcon from "@mui/icons-material/DeleteSweepRounded";
+import { getNotifications, markAsRead } from "../services/notificationService";
 
 function Notifications() {
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [viewFilter, setViewFilter] = useState<"All" | "Unread" | "Read">("All");
+  const [sortBy, setSortBy] = useState<"Newest" | "Oldest">("Newest");
+
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const role = localStorage.getItem("role") || "Employee";
 
   useEffect(() => {
     loadNotifications();
   }, []);
 
-  const getDismissedIds = (): number[] => {
+  const getClearedIds = (): number[] => {
     try {
-      const stored = localStorage.getItem("dismissed_notifications");
+      const stored = localStorage.getItem("cleared_notifications");
       return stored ? JSON.parse(stored) : [];
     } catch {
       return [];
     }
   };
 
-  const saveDismissedId = (id: number) => {
-    const current = getDismissedIds();
+  const saveClearedId = (id: number) => {
+    const current = getClearedIds();
     if (!current.includes(id)) {
       current.push(id);
-      localStorage.setItem("dismissed_notifications", JSON.stringify(current));
+      localStorage.setItem("cleared_notifications", JSON.stringify(current));
     }
   };
 
   const loadNotifications = async () => {
     try {
       const data = await getNotifications();
-      const dismissed = getDismissedIds();
-      // Filter out notifications that are read in backend OR dismissed locally
-      const active = (Array.isArray(data) ? data : []).filter(
-        (n) => !n.isRead && !dismissed.includes(n.id)
-      );
-      setNotifications(active);
+      const cleared = getClearedIds();
+
+      // Filter out permanently cleared notices & restrict by role
+      const valid = (Array.isArray(data) ? data : []).filter((n) => {
+        if (cleared.includes(n.id)) return false;
+
+        const msg = (n.message || "").toLowerCase();
+        if (role === "Manager") {
+          return msg.startsWith("new leave request");
+        } else {
+          return msg.startsWith("your ");
+        }
+      });
+
+      setNotifications(valid);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleDismissSingle = async (id: number) => {
+  const handleMarkSingleRead = async (id: number) => {
     try {
       await markAsRead(id);
     } catch (e) {
       console.error(e);
     }
-    saveDismissedId(id);
-    setNotifications((prev) => prev.filter((item) => item.id !== id));
+    setNotifications((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, isRead: true } : item))
+    );
+    window.dispatchEvent(new Event("notifications_updated"));
   };
 
-  const handleDismissAll = async () => {
+  const handleMarkAllRead = async () => {
+    setMenuAnchorEl(null);
     for (const notif of notifications) {
-      try {
-        await markAsRead(notif.id);
-      } catch (e) {
-        console.error(e);
+      if (!notif.isRead) {
+        try {
+          await markAsRead(notif.id);
+        } catch (e) {
+          console.error(e);
+        }
       }
-      saveDismissedId(notif.id);
     }
-    setNotifications([]);
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    window.dispatchEvent(new Event("notifications_updated"));
   };
+
+  const handleClearAll = () => {
+    setMenuAnchorEl(null);
+    notifications.forEach((n) => saveClearedId(n.id));
+    setNotifications([]);
+    window.dispatchEvent(new Event("notifications_updated"));
+  };
+
+  const filteredAndSorted = useMemo(() => {
+    return notifications
+      .filter((item) => {
+        if (viewFilter === "Unread") return !item.isRead;
+        if (viewFilter === "Read") return item.isRead;
+        return true;
+      })
+      .sort((a, b) => {
+        const timeA = new Date(a.createdAt || 0).getTime();
+        const timeB = new Date(b.createdAt || 0).getTime();
+        return sortBy === "Newest" ? timeB - timeA : timeA - timeB;
+      });
+  }, [notifications, viewFilter, sortBy]);
 
   const getStatusProps = (message: string) => {
     const text = message.toLowerCase();
@@ -99,6 +142,24 @@ function Notifications() {
     };
   };
 
+  const dropdownSx = {
+    height: "44px",
+    backgroundColor: "#FFFFFF",
+    borderRadius: "10px",
+    fontSize: "14px",
+    fontWeight: 600,
+    color: "#334155",
+    "& fieldset": {
+      borderColor: "#E2E8F0",
+    },
+    "&:hover fieldset": {
+      borderColor: "#CBD5E1",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#00B5B8",
+    },
+  };
+
   return (
     <Box sx={{ width: "100%", minHeight: "100vh", backgroundColor: "#F8FAFC", p: { xs: 2.5, md: 4 } }}>
       {/* Header */}
@@ -116,7 +177,7 @@ function Notifications() {
         Review your leave decisions, manager notices, and workflow status alerts.
       </Typography>
 
-      {/* Hero Banner with Action Button */}
+      {/* Hero Banner */}
       <Card
         sx={{
           mb: 4,
@@ -133,34 +194,94 @@ function Notifications() {
           <Typography sx={{ fontSize: { xs: 30, md: 46 }, fontWeight: 800, mt: 1.2, mb: 1.5 }}>
             Activity Feed
           </Typography>
-          <Typography sx={{ opacity: 0.85, mb: 3.5, maxWidth: 650 }}>
+          <Typography sx={{ opacity: 0.85, maxWidth: 650 }}>
             Stay updated with real-time approvals, manager remarks, and administrative time-off communications.
           </Typography>
-
-          {notifications.length > 0 && (
-            <Button
-              variant="contained"
-              startIcon={<DoneAllRoundedIcon />}
-              onClick={handleDismissAll}
-              sx={{
-                backgroundColor: "#00B5B8",
-                fontWeight: 700,
-                borderRadius: "12px",
-                textTransform: "none",
-                px: 3,
-                py: 1,
-                fontSize: "14px",
-                boxShadow: "0 6px 18px rgba(0,181,184,0.35)",
-                "&:hover": { backgroundColor: "#009EA0" },
-              }}
-            >
-              Dismiss All as Read
-            </Button>
-          )}
         </CardContent>
       </Card>
 
-      {/* Unified Compact Notification List Card */}
+      {/* Filter and Controls Toolbar matching screenshot */}
+      <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 1.5, mb: 2.5 }}>
+        {/* Viewing Selector */}
+        <Select
+          value={viewFilter}
+          onChange={(e) => setViewFilter(e.target.value as any)}
+          sx={{ ...dropdownSx, minWidth: 160 }}
+          renderValue={(selected) => (
+            <Box sx={{ display: "flex", gap: 0.6 }}>
+              <Typography sx={{ color: "#64748B", fontSize: "14px" }}>Viewing:</Typography>
+              <Typography sx={{ fontWeight: 700, color: "#0F173B", fontSize: "14px" }}>{selected}</Typography>
+            </Box>
+          )}
+        >
+          <MenuItem value="All">All</MenuItem>
+          <MenuItem value="Unread">Unread</MenuItem>
+          <MenuItem value="Read">Read</MenuItem>
+        </Select>
+
+        {/* Sort By Selector */}
+        <Select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as any)}
+          sx={{ ...dropdownSx, minWidth: 170 }}
+          renderValue={(selected) => (
+            <Box sx={{ display: "flex", gap: 0.6 }}>
+              <Typography sx={{ color: "#64748B", fontSize: "14px" }}>Sort By:</Typography>
+              <Typography sx={{ fontWeight: 700, color: "#0F173B", fontSize: "14px" }}>{selected}</Typography>
+            </Box>
+          )}
+        >
+          <MenuItem value="Newest">Newest</MenuItem>
+          <MenuItem value="Oldest">Oldest</MenuItem>
+        </Select>
+
+        {/* Three Dots Button */}
+        <IconButton
+          onClick={(e) => setMenuAnchorEl(e.currentTarget)}
+          sx={{
+            width: 44,
+            height: 44,
+            borderRadius: "10px",
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E2E8F0",
+            color: "#64748B",
+            "&:hover": { borderColor: "#CBD5E1", backgroundColor: "#F8FAFC" },
+          }}
+        >
+          <MoreVertRoundedIcon fontSize="small" />
+        </IconButton>
+
+        {/* Action Dropdown Menu */}
+        <Menu
+          anchorEl={menuAnchorEl}
+          open={Boolean(menuAnchorEl)}
+          onClose={() => setMenuAnchorEl(null)}
+          PaperProps={{
+            sx: {
+              borderRadius: "14px",
+              boxShadow: "0 10px 25px rgba(15, 23, 59, 0.12)",
+              border: "1px solid #E2E8F0",
+              minWidth: 180,
+              mt: 1,
+            },
+          }}
+        >
+          <MenuItem onClick={handleMarkAllRead} sx={{ py: 1.2 }}>
+            <ListItemIcon>
+              <DoneAllRoundedIcon fontSize="small" sx={{ color: "#00B5B8" }} />
+            </ListItemIcon>
+            <ListItemText primary="Mark all as read" primaryTypographyProps={{ fontSize: "13.5px", fontWeight: 600 }} />
+          </MenuItem>
+          <MenuItem onClick={handleClearAll} sx={{ py: 1.2, color: "#DC2626" }}>
+            <ListItemIcon>
+              <DeleteSweepRoundedIcon fontSize="small" sx={{ color: "#DC2626" }} />
+            </ListItemIcon>
+            <ListItemText primary="Clear all alerts" primaryTypographyProps={{ fontSize: "13.5px", fontWeight: 600 }} />
+          </MenuItem>
+        </Menu>
+      </Box>
+
+      {/* Main Notification Card List */}
       <Card
         sx={{
           borderRadius: "24px",
@@ -170,7 +291,7 @@ function Notifications() {
           overflow: "hidden",
         }}
       >
-        {notifications.length === 0 ? (
+        {filteredAndSorted.length === 0 ? (
           <Box
             sx={{
               py: 9,
@@ -196,27 +317,30 @@ function Notifications() {
               <NotificationsOffOutlinedIcon sx={{ fontSize: 32, color: "#00B5B8" }} />
             </Box>
             <Typography variant="h6" fontWeight={700} color="#0F173B">
-              All caught up!
+              No notifications found
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              You have no unread notifications or pending status alerts.
+              {viewFilter === "All"
+                ? "You have no notifications or pending status alerts."
+                : `There are no ${viewFilter.toLowerCase()} notifications to display.`}
             </Typography>
           </Box>
         ) : (
           <Box sx={{ divideY: "1px solid #F1F5F9" }}>
-            {notifications.map((n) => {
+            {filteredAndSorted.map((n) => {
               const style = getStatusProps(n.message);
               return (
                 <Box
                   key={n.id}
                   sx={{
                     px: { xs: 2.5, md: 4 },
-                    py: 2,
+                    py: 2.2,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
                     gap: 2.5,
                     borderBottom: "1px solid #F1F5F9",
+                    backgroundColor: n.isRead ? "#FFFFFF" : "#F7FBFC",
                     transition: "0.2s background-color",
                     "&:hover": {
                       backgroundColor: "#FAFBFC",
@@ -226,7 +350,7 @@ function Notifications() {
                     },
                   }}
                 >
-                  {/* Left: Icon & Text grouped closely */}
+                  {/* Left: Icon & Description */}
                   <Box display="flex" alignItems="center" gap={2.5}>
                     <Box
                       sx={{
@@ -238,41 +362,67 @@ function Notifications() {
                         alignItems: "center",
                         justifyContent: "center",
                         flexShrink: 0,
+                        opacity: n.isRead ? 0.75 : 1,
                       }}
                     >
                       {style.icon}
                     </Box>
 
                     <Box>
-                      <Typography fontWeight={600} color="#0F173B" fontSize={15}>
-                        {n.message}
-                      </Typography>
+                      <Box display="flex" alignItems="center" gap={1.2}>
+                        <Typography
+                          fontWeight={n.isRead ? 600 : 750}
+                          color={n.isRead ? "#475569" : "#0F173B"}
+                          fontSize={15}
+                        >
+                          {n.message}
+                        </Typography>
+                        {!n.isRead && (
+                          <Box
+                            sx={{
+                              width: 8,
+                              height: 8,
+                              borderRadius: "50%",
+                              backgroundColor: "#00B5B8",
+                            }}
+                          />
+                        )}
+                      </Box>
                       <Typography variant="caption" color="text.secondary">
                         {n.createdAt ? new Date(n.createdAt).toLocaleString() : "Just now"}
                       </Typography>
                     </Box>
                   </Box>
 
-                  {/* Right: Quick Action to Mark this read */}
-                  <Tooltip title="Dismiss">
-                    <IconButton
-                      size="small"
-                      onClick={() => handleDismissSingle(n.id)}
-                      sx={{
-                        color: "#94A3B8",
-                        border: "1px solid #E2E8F0",
-                        borderRadius: "10px",
-                        p: 0.8,
-                        "&:hover": {
-                          color: "#00B5B8",
-                          borderColor: "#00B5B8",
-                          backgroundColor: "#E6F8F8",
-                        },
-                      }}
+                  {/* Right: Mark Read button if still unread */}
+                  {!n.isRead ? (
+                    <Tooltip title="Mark as read">
+                      <IconButton
+                        size="small"
+                        onClick={() => handleMarkSingleRead(n.id)}
+                        sx={{
+                          color: "#94A3B8",
+                          border: "1px solid #E2E8F0",
+                          borderRadius: "10px",
+                          p: 0.8,
+                          "&:hover": {
+                            color: "#00B5B8",
+                            borderColor: "#00B5B8",
+                            backgroundColor: "#E6F8F8",
+                          },
+                        }}
+                      >
+                        <CheckRoundedIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    <Typography
+                      variant="caption"
+                      sx={{ color: "#94A3B8", fontWeight: 600, fontSize: "12px" }}
                     >
-                      <CheckRoundedIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
+                      Read
+                    </Typography>
+                  )}
                 </Box>
               );
             })}

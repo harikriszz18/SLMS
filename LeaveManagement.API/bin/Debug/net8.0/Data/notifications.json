@@ -1,86 +1,30 @@
 [
   {
     "Id": 1,
-    "UserId": 3,
-    "Message": "Leave request submitted successfully.",
-    "CreatedAt": "2026-09-16T11:07:24.006296+05:30",
+    "UserId": 4,
+    "Message": "Your Sick request (2026-09-18 to 2026-09-18) has been APPROVED.",
+    "CreatedAt": "2026-09-17T10:28:01.4563621+05:30",
     "IsRead": true
   },
   {
     "Id": 2,
-    "UserId": 2,
-    "Message": "Leave request submitted successfully.",
-    "CreatedAt": "2026-09-16T11:17:25.8565043+05:30",
-    "IsRead": false
+    "UserId": 5,
+    "Message": "Your Sick request (2026-09-18 to 2026-09-18) has been submitted.",
+    "CreatedAt": "2026-09-17T10:58:36.1884757+05:30",
+    "IsRead": true
   },
   {
     "Id": 3,
     "UserId": 3,
-    "Message": "Your leave request has been approved.",
-    "CreatedAt": "2026-09-16T11:22:19.7029173+05:30",
-    "IsRead": false
+    "Message": "New leave request from Ayman for Sick (2026-09-18 to 2026-09-18).",
+    "CreatedAt": "2026-09-17T10:58:36.2018383+05:30",
+    "IsRead": true
   },
   {
     "Id": 4,
-    "UserId": 2,
-    "Message": "Your leave request has been approved.",
-    "CreatedAt": "2026-09-16T11:22:21.1478762+05:30",
-    "IsRead": false
-  },
-  {
-    "Id": 5,
     "UserId": 5,
-    "Message": "Leave request submitted successfully.",
-    "CreatedAt": "2026-09-16T12:24:50.2182439+05:30",
-    "IsRead": false
-  },
-  {
-    "Id": 6,
-    "UserId": 5,
-    "Message": "Leave request submitted successfully.",
-    "CreatedAt": "2026-09-16T13:21:01.1579056+05:30",
-    "IsRead": false
-  },
-  {
-    "Id": 7,
-    "UserId": 5,
-    "Message": "Your leave request has been approved.",
-    "CreatedAt": "2026-09-16T13:21:47.0722805+05:30",
-    "IsRead": false
-  },
-  {
-    "Id": 8,
-    "UserId": 5,
-    "Message": "Your leave request has been approved.",
-    "CreatedAt": "2026-09-16T13:21:48.9942758+05:30",
-    "IsRead": false
-  },
-  {
-    "Id": 9,
-    "UserId": 5,
-    "Message": "Leave request submitted successfully.",
-    "CreatedAt": "2026-09-16T13:32:57.4468621+05:30",
-    "IsRead": false
-  },
-  {
-    "Id": 10,
-    "UserId": 6,
-    "Message": "Leave request submitted successfully.",
-    "CreatedAt": "2026-09-16T13:33:48.4413282+05:30",
-    "IsRead": false
-  },
-  {
-    "Id": 11,
-    "UserId": 5,
-    "Message": "Your leave request has been approved.",
-    "CreatedAt": "2026-09-16T13:34:54.2533901+05:30",
-    "IsRead": false
-  },
-  {
-    "Id": 12,
-    "UserId": 6,
-    "Message": "Your leave request has been approved.",
-    "CreatedAt": "2026-09-16T13:34:55.6198471+05:30",
+    "Message": "Your Sick request (2026-09-18 to 2026-09-18) has been APPROVED.",
+    "CreatedAt": "2026-09-17T11:01:04.2303241+05:30",
     "IsRead": false
   }
 ]

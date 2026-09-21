@@ -20,5 +20,15 @@
     "C:\\Users\\Z005880F\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.6.2\\swashbuckle.aspnetcore.swaggerui.6.6.2.nupkg.sha512",
     "C:\\Users\\Z005880F\\.nuget\\packages\\system.identitymodel.tokens.jwt\\7.1.2\\system.identitymodel.tokens.jwt.7.1.2.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1900",
+      "level": "Warning",
+      "message": "Error occurred while getting package vulnerability data: Unable to load the service index for source https://api.nuget.org/v3/index.json.",
+      "projectPath": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\LeaveManagement.API.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Z005880F\\SLMS\\LeaveManagement.API\\LeaveManagement.API.csproj",
+      "targetGraphs": []
+    }
+  ]
 }

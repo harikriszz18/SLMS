@@ -19,6 +19,7 @@ import {
   CircularProgress,
   Divider,
   Alert,
+  Button,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -61,6 +62,9 @@ export default function WorkforceRoster() {
     onLeaveCount: 0,
   });
   const [departments, setDepartments] = useState<DepartmentGroup[]>([]);
+  const [selectedDept, setSelectedDept] = useState<string>("");
+
+  const userDept = localStorage.getItem("department") || "";
 
   useEffect(() => {
     if (selectedDate) {
@@ -83,7 +87,20 @@ export default function WorkforceRoster() {
           presentCount: res.data.summary?.presentCount ?? 0,
           onLeaveCount: res.data.summary?.onLeaveCount ?? 0,
         });
-        setDepartments(Array.isArray(res.data.departments) ? res.data.departments : []);
+        const depts: DepartmentGroup[] = Array.isArray(res.data.departments) ? res.data.departments : [];
+        setDepartments(depts);
+
+        // Auto-select manager's department on first load
+        setSelectedDept((prev) => {
+          if (prev) return prev;
+          if (depts.length > 0) {
+            const matched = depts.find(
+              (d) => d.departmentName.toLowerCase() === userDept.trim().toLowerCase()
+            );
+            return matched ? matched.departmentName : depts[0].departmentName;
+          }
+          return "";
+        });
       }
     } catch (err: any) {
       console.error("Roster fetch error:", err);
@@ -104,6 +121,12 @@ export default function WorkforceRoster() {
     border: "1px solid #E2E8F0",
   };
 
+  // Filter department groups based on selected tab button
+  const displayedDepartments =
+    selectedDept === "ALL" || !selectedDept
+      ? departments
+      : departments.filter((d) => d.departmentName.toLowerCase() === selectedDept.toLowerCase());
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ width: "100%", minHeight: "100vh", backgroundColor: "#F8FAFC", p: { xs: 2.5, md: 4 } }}>
@@ -115,7 +138,7 @@ export default function WorkforceRoster() {
             lineHeight: 1.1,
           }}
         >
-          Departmental Workforce Roster
+           Workforce Roster
         </Typography>
         <Typography sx={{ color: "#667085", mb: 4, mt: 0.8 }}>
           Multi-department attendance & presence dashboard for all operational divisions.
@@ -204,7 +227,7 @@ export default function WorkforceRoster() {
           <Box
             sx={{
               display: "flex",
-              gap: { xs: 2.5, md: 4 }, // Distinct spacious gap between Date and Search
+              gap: { xs: 2.5, md: 4 },
               flexWrap: "wrap",
               alignItems: "center",
               justifyContent: "space-between",
@@ -290,6 +313,87 @@ export default function WorkforceRoster() {
             </Box>
           </Box>
         </Card>
+
+        {/* Department Switcher Tabs */}
+        {departments.length > 0 && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+              mb: 3.5,
+              overflowX: "auto",
+              pb: 0.5,
+            }}
+          >
+            {departments.map((dept) => {
+              const isSelected = selectedDept.toLowerCase() === dept.departmentName.toLowerCase();
+              return (
+                <Button
+                  key={dept.departmentName}
+                  onClick={() => setSelectedDept(dept.departmentName)}
+                  variant={isSelected ? "contained" : "outlined"}
+                  startIcon={<BusinessRoundedIcon />}
+                  sx={{
+                    borderRadius: "14px",
+                    px: 2.8,
+                    py: 1.2,
+                    fontWeight: 700,
+                    fontSize: "14px",
+                    textTransform: "none",
+                    whiteSpace: "nowrap",
+                    backgroundColor: isSelected ? "#00B5B8" : "#FFFFFF",
+                    color: isSelected ? "#FFFFFF" : "#475569",
+                    borderColor: isSelected ? "#00B5B8" : "#E2E8F0",
+                    boxShadow: isSelected ? "0 6px 16px rgba(0,181,184,0.30)" : "none",
+                    "&:hover": {
+                      backgroundColor: isSelected ? "#009EA0" : "#F8FAFC",
+                      borderColor: isSelected ? "#009EA0" : "#CBD5E1",
+                    },
+                  }}
+                >
+                  {dept.departmentName}
+                  <Chip
+                    label={`${dept.present ?? 0}/${dept.total ?? 0}`}
+                    size="small"
+                    sx={{
+                      ml: 1.2,
+                      height: "22px",
+                      fontSize: "12px",
+                      fontWeight: 800,
+                      backgroundColor: isSelected ? "rgba(255,255,255,0.25)" : "#F1F5F9",
+                      color: isSelected ? "#FFFFFF" : "#64748B",
+                    }}
+                  />
+                </Button>
+              );
+            })}
+
+            {/* View All Option */}
+            <Button
+              onClick={() => setSelectedDept("ALL")}
+              variant={selectedDept === "ALL" ? "contained" : "outlined"}
+              sx={{
+                borderRadius: "14px",
+                px: 2.5,
+                py: 1.2,
+                fontWeight: 700,
+                fontSize: "14px",
+                textTransform: "none",
+                whiteSpace: "nowrap",
+                backgroundColor: selectedDept === "ALL" ? "#0F173B" : "#FFFFFF",
+                color: selectedDept === "ALL" ? "#FFFFFF" : "#475569",
+                borderColor: selectedDept === "ALL" ? "#0F173B" : "#E2E8F0",
+                "&:hover": {
+                  backgroundColor: selectedDept === "ALL" ? "#1A1450" : "#F8FAFC",
+                },
+              }}
+            >
+              All Departments
+            </Button>
+          </Box>
+        )}
+
         {/* Grouped Department Tables */}
         {loading ? (
           <Box display="flex" justifyContent="center" py={8}>
@@ -297,7 +401,7 @@ export default function WorkforceRoster() {
           </Box>
         ) : (
           <Box display="flex" flexDirection="column" gap={4}>
-            {departments.map((deptGroup) => {
+            {displayedDepartments.map((deptGroup) => {
               const employeeList = Array.isArray(deptGroup?.employees) ? deptGroup.employees : [];
               const filteredEmployees = employeeList.filter((emp) =>
                 (emp?.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -5,6 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LeaveManagement.API.Controllers;
 
+public class UpdateProfilePictureDto
+{
+    public string Email { get; set; } = string.Empty;
+    public string ProfilePicture { get; set; } = string.Empty;
+}
+
 [ApiController]
 [Route("api/[controller]")]
 public class EmployeeController : ControllerBase
@@ -73,5 +79,67 @@ public class EmployeeController : ControllerBase
         await _repository.WriteAsync("users.json", users);
 
         return Ok(new { message = "Password updated successfully." });
+    }
+
+    [HttpPost("profile-picture")]
+    public async Task<IActionResult> UpdateProfilePicture([FromBody] UpdateProfilePictureDto dto)
+    {
+        var users = await _repository.ReadAsync<User>("users.json");
+        var user = users.FirstOrDefault(u => u.Email.Trim().ToLower() == dto.Email.Trim().ToLower());
+
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found." });
+        }
+
+        user.ProfilePicture = dto.ProfilePicture;
+        await _repository.WriteAsync("users.json", users);
+
+        return Ok(new
+        {
+            message = "Profile picture updated successfully.",
+            profilePicture = user.ProfilePicture
+        });
+    }
+
+    [HttpGet("profile-picture")]
+    public async Task<IActionResult> GetProfilePicture([FromQuery] string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return BadRequest(new { message = "Email is required." });
+        }
+
+        var users = await _repository.ReadAsync<User>("users.json");
+        var user = users.FirstOrDefault(u => u.Email.Trim().ToLower() == email.Trim().ToLower());
+
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found." });
+        }
+
+        return Ok(new { profilePicture = user.ProfilePicture ?? string.Empty });
+    }
+
+    [HttpDelete("profile-picture")]
+    public async Task<IActionResult> RemoveProfilePicture([FromQuery] string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return BadRequest(new { message = "Email is required." });
+        }
+
+        var users = await _repository.ReadAsync<User>("users.json");
+        var user = users.FirstOrDefault(u => u.Email.Trim().ToLower() == email.Trim().ToLower());
+
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found." });
+        }
+
+        user.ProfilePicture = null;
+        await _repository.WriteAsync("users.json", users);
+
+        return Ok(new { message = "Profile picture removed successfully." });
     }
 }

@@ -43,24 +43,50 @@ public class LeaveService : ILeaveService
     public async Task ApplyLeaveAsync(ApplyLeaveDto leaveDto, int employeeId)
     {
         var leaves = await _repository.ReadAsync<Leave>("leaves.json");
+        var users = await _repository.ReadAsync<User>("users.json");
+        var currentUser = users.FirstOrDefault(u => u.Id == employeeId);
+        string employeeName = currentUser?.Name ?? $"Employee #{employeeId}";
+        string employeeDept = currentUser?.Department?.Trim() ?? string.Empty;
 
         var leave = new Leave
         {
-            Id = leaves.Count > 0 ? leaves.Max(x => x.Id) + 1 : 1,
+            Id = leaves.Count > 0 ? leaves.Max(l => l.Id) + 1 : 1,
             EmployeeId = employeeId,
-            LeaveType = leaveDto.LeaveType ?? string.Empty,
+            LeaveType = leaveDto.LeaveType,
             StartDate = leaveDto.StartDate.ToString("yyyy-MM-dd"),
             EndDate = leaveDto.EndDate.ToString("yyyy-MM-dd"),
-            Reason = leaveDto.Reason ?? string.Empty,
-            Status = LeaveStatus.Pending
+            Reason = leaveDto.Reason,
+            Status = "Pending"
         };
 
         leaves.Add(leave);
         await _repository.WriteAsync("leaves.json", leaves);
 
+        // 1. Notify Applicant Employee
         await _notificationService.CreateNotificationAsync(
             employeeId,
-            "Leave request submitted successfully.");
+            $"Your {leaveDto.LeaveType} request ({leave.StartDate} to {leave.EndDate}) has been submitted.");
+
+        // 2. Find managers in the same department
+        var targetManagers = users
+            .Where(u => u.Role == "Manager" &&
+                        !string.IsNullOrEmpty(employeeDept) &&
+                        !string.IsNullOrEmpty(u.Department) &&
+                        u.Department.Trim().Equals(employeeDept, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        // Fallback: If no matching manager by dept, notify ALL managers
+        if (targetManagers.Count == 0)
+        {
+            targetManagers = users.Where(u => u.Role == "Manager").ToList();
+        }
+
+        foreach (var mgr in targetManagers)
+        {
+            await _notificationService.CreateNotificationAsync(
+                mgr.Id,
+                $"New leave request from {employeeName} for {leaveDto.LeaveType} ({leave.StartDate} to {leave.EndDate}).");
+        }
     }
 
     public async Task<List<Leave>> GetLeaveHistoryAsync(int employeeId)
@@ -81,9 +107,9 @@ public class LeaveService : ILeaveService
         var leaves = await _repository.ReadAsync<Leave>("leaves.json");
         var users = await _repository.ReadAsync<User>("users.json");
 
-        // Collect IDs of all employees in this manager's department
         var deptEmployeeIds = users
-            .Where(u => u.Department.Trim().Equals(department.Trim(), StringComparison.OrdinalIgnoreCase))
+            .Where(u => !string.IsNullOrEmpty(u.Department) &&
+                        u.Department.Trim().Equals(department.Trim(), StringComparison.OrdinalIgnoreCase))
             .Select(u => u.Id)
             .ToHashSet();
 
@@ -99,10 +125,12 @@ public class LeaveService : ILeaveService
         if (leave == null) return;
 
         leave.Status = LeaveStatus.Approved;
+        await _repository.WriteAsync("leaves.json", leaves);
+
+        string dateRange = $"{leave.StartDate} to {leave.EndDate}";
         await _notificationService.CreateNotificationAsync(
             leave.EmployeeId,
-            "Your leave request has been approved.");
-        await _repository.WriteAsync("leaves.json", leaves);
+            $"Your {leave.LeaveType} request ({dateRange}) has been APPROVED.");
     }
 
     public async Task RejectLeaveAsync(int leaveId)
@@ -112,10 +140,12 @@ public class LeaveService : ILeaveService
         if (leave == null) return;
 
         leave.Status = LeaveStatus.Rejected;
+        await _repository.WriteAsync("leaves.json", leaves);
+
+        string dateRange = $"{leave.StartDate} to {leave.EndDate}";
         await _notificationService.CreateNotificationAsync(
             leave.EmployeeId,
-            "Your leave request has been rejected.");
-        await _repository.WriteAsync("leaves.json", leaves);
+            $"Your {leave.LeaveType} request ({dateRange}) has been REJECTED.");
     }
 
     public async Task<LeaveBalanceDto> GetLeaveBalanceAsync(int employeeId)
@@ -142,7 +172,8 @@ public class LeaveService : ILeaveService
         var users = await _repository.ReadAsync<User>("users.json");
 
         var deptEmployeeIds = users
-            .Where(u => u.Department.Trim().Equals(department.Trim(), StringComparison.OrdinalIgnoreCase))
+            .Where(u => !string.IsNullOrEmpty(u.Department) &&
+                        u.Department.Trim().Equals(department.Trim(), StringComparison.OrdinalIgnoreCase))
             .Select(u => u.Id)
             .ToHashSet();
 
